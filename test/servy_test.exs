@@ -69,6 +69,10 @@ defmodule ServyTest do
     conv = %{ method: "GET", path: "/teddy", resp_body: "", status: nil }
     result = Subject.route(conv)
     assert result == %{ method: "GET", path: "/teddy", resp_body: "No /teddy here!", status: 404 }
+    conv = %{ method: "GET", path: "/about", resp_body: "", status: nil }
+    result = Subject.route(conv)
+    {:ok, content} = File.read("pages/about.html")
+    assert result == %{ method: "GET", path: "/about", resp_body: content, status: 200 }
   end
 
   test "Responds to emojify properly" do
