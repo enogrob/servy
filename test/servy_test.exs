@@ -1,6 +1,7 @@
 defmodule ServyTest do
   use ExUnit.Case
-  import ExUnit.CaptureIO
+#  import ExUnit.CaptureIO
+  import ExUnit.CaptureLog
 
   alias Servy.Handler, as: Subject
   doctest Servy
@@ -73,6 +74,10 @@ defmodule ServyTest do
     result = Subject.route(conv)
     {:ok, content} = File.read("pages/about.html")
     assert result == %{ method: "GET", path: "/about", resp_body: content, status: 200 }
+    conv = %{ method: "GET", path: "/pages/contact", resp_body: "", status: nil }
+    result = Subject.route(conv)
+#    {:ok, content} = File.read("pages/about.html")
+    assert result == %{ method: "GET", path: "/pages/contact", resp_body: "File not found", status: 404 }
   end
 
   test "Responds to emojify properly" do
@@ -82,14 +87,13 @@ defmodule ServyTest do
 
   test "Responds to track properly" do
     conv = %{ method: "GET", path: "/wild", resp_body: "", status: 404 }
-    Subject.track(conv) == """
-      Warning: /wild is on the loose!
-      """
+    fun = fn -> Subject.track(conv) end
+    assert capture_log(fun) =~ "Warning /wild is on the loose"
   end
 
   test "Responds to format_response properly" do
     conv = %{ method: "GET", path: "/wildthings", resp_body: "Bears, Lions, Tigers", status: 200}
-    IO.puts Subject.format_response(conv) == """
+    assert IO.puts Subject.format_response(conv) == """
       HTTP/1.1 200 OK
       Content-Type: text/html
       Content-Length: 20
