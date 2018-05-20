@@ -4,6 +4,9 @@ defmodule ServyTest do
   import ExUnit.CaptureLog
 
   alias Servy.Handler, as: Subject
+  alias Servy.Plugins, as: Plugins
+  alias Servy.Parser, as: Parser
+
   doctest Servy
 
   test "Responds to handle properly" do
@@ -35,22 +38,22 @@ defmodule ServyTest do
       Accept: */*
 
       """
-    result = Subject.parse(request)
+    result = Parser.parse(request)
     assert result == %{ method: "GET", path: "/wildthings", resp_body: "", status: nil}
   end
 
   test "Responds to rewrite_path properly" do
     conv = %{ method: "GET", path: "/bears?id=1", resp_body: "", status: nil }
-    result = Subject.rewrite_path(conv)
+    result = Plugins.rewrite_path(conv)
     assert result == %{ method: "GET", path: "/bears/1", resp_body: "", status: nil }
     conv = %{ method: "GET", path: "/wildlife", resp_body: "", status: nil }
-    result = Subject.rewrite_path(conv)
+    result = Plugins.rewrite_path(conv)
     assert result == %{ method: "GET", path: "/wildthings", resp_body: "", status: nil }
   end
 
   test "Responds to log properly" do
     conv = %{ method: "GET", path: "/wildthings", resp_body: "Bears, Lions, Tigers" }
-    result = Subject.log(conv)
+    result = Plugins.log(conv)
     assert result == %{method: "GET", path: "/wildthings", resp_body: "Bears, Lions, Tigers"}
   end
 
@@ -87,7 +90,7 @@ defmodule ServyTest do
 
   test "Responds to track properly" do
     conv = %{ method: "GET", path: "/wild", resp_body: "", status: 404 }
-    fun = fn -> Subject.track(conv) end
+    fun = fn -> Plugins.track(conv) end
     assert capture_log(fun) =~ "Warning /wild is on the loose"
   end
 
