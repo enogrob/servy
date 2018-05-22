@@ -1,23 +1,24 @@
 defmodule Servy.Plugins do
   require Logger
+  alias Servy.Conv
 
   @doc "Logs 404 requests."
-  def track(%{status: 404, path: path} = conv) do
+  def track(%Conv{status: 404, path: path} = conv) do
     Logger.error "Warning #{path} is on the loose"
     conv
   end
 
-  def track(conv), do: conv
+  def track(%Conv{} = conv), do: conv
 
-  def rewrite_path(%{path: "/wildlife"} = conv) do
+  def rewrite_path(%Conv{path: "/wildlife"} = conv) do
     %{ conv | path: "/wildthings" }
   end
 
-  def rewrite_path(%{path: "/bears?id=" <> id} = conv) do
+  def rewrite_path(%Conv{path: "/bears?id=" <> id} = conv) do
     %{ conv | path: "/bears/#{id}" }
   end
 
-  def rewrite_path(conv), do: conv
+  def rewrite_path(%Conv{} = conv), do: conv
 
   # def rewrite_path(%{path: path} = conv) do
   #   regex = ~r{\/(?<thing>\w+)\?id=(?<id>\d+)}
@@ -31,5 +32,5 @@ defmodule Servy.Plugins do
   # end
   # def rewrite_path_captures(conv, nil), do: conv
 
-  def log(conv), do: IO.inspect(conv)
+  def log(%Conv{} = conv), do: IO.inspect(conv)
 end
