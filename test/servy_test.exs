@@ -29,6 +29,24 @@ defmodule ServyTest do
       Bears, Lions, Tigers
       🎉🎉🎉🎉🎉
       """
+
+    request = """
+    POST /bears HTTP/1.1
+    Host: example.com
+    User-Agent: ExampleBrowser/1.0
+    Accept: */*
+
+    name=Baloo&type=Brown
+    """
+
+    result = Subject.handle(request)
+    assert result == """
+           HTTP/1.1 201 Created
+           Content-Type: text/html
+           Content-Length: 32
+
+           Created a Brown bear named Baloo
+           """
   end
 
   test "Responds to parse properly" do
