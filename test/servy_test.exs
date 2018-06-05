@@ -35,6 +35,7 @@ defmodule ServyTest do
     Host: example.com
     User-Agent: ExampleBrowser/1.0
     Accept: */*
+    Content-Type: application/x-www-form-urlencoded
 
     name=Baloo&type=Brown
     """
@@ -58,7 +59,7 @@ defmodule ServyTest do
 
       """
     result = Parser.parse(request)
-    assert result == %Conv{ method: "GET", path: "/wildthings", resp_body: "", status: nil}
+    assert result == %Conv{ method: "GET", path: "/wildthings", resp_body: "", status: nil, headers: %{"Accept" => "*/*", "Host" => "example.com", "User-Agent" => "ExampleBrowser/1.0"}}
   end
 
   test "Responds to rewrite_path properly" do
