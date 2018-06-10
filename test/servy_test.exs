@@ -83,10 +83,10 @@ defmodule ServyTest do
     assert result == %Conv{ method: "GET", path: "/wildthings", resp_body: "Bears, Lions, Tigers", status: 200 }
     conv = %Conv{ method: "GET", path: "/bears", resp_body: "", status: nil }
     result = Subject.route(conv)
-    assert result == %Conv{ method: "GET", path: "/bears", resp_body: "Teddy, Smokey, Paddington", status: 200 }
+    assert result == %Conv{ method: "GET", path: "/bears", resp_body: "<ul><li>Brutus - Grizzly<</li><li>Kenai - Grizzly<</li><li>Scarface - Grizzly<</li></ul>", status: 200 }
     conv = %Conv{ method: "GET", path: "/bears/1", resp_body: "", status: nil }
     result = Subject.route(conv)
-    assert result == %Conv{ method: "GET", path: "/bears/1", resp_body: "Bear 1", status: 200 }
+    assert result == %Conv{ method: "GET", path: "/bears/1", resp_body: "<h1>Bear 1: Teddy</h1>", status: 200 }
     conv = %Conv{ method: "DELETE", path: "/bears/1", resp_body: "", status: nil }
     result = Subject.route(conv)
     assert result == %Conv{ method: "DELETE", path: "/bears/1", resp_body: "Deleting a bear is forbidden!", status: 403 }
