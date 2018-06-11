@@ -9,7 +9,7 @@ defmodule Servy.Parser do
 
     [method, path, _] = String.split(request_line, " ")
 
-    headers = parse_headers(header_lines, %{})
+    headers = parse_headers(header_lines)
 
     params = parse_params(headers["Content-Type"], params_string)
 
@@ -19,10 +19,11 @@ defmodule Servy.Parser do
           headers: headers}
   end
 
-  def parse_headers([head | tail], headers) do
-    [key, value] = String.split(head, ": ")
-    headers = Map.put(headers, key, value)
-    parse_headers(tail, headers)
+  def parse_headers(header_lines) do
+    Enum.reduce(header_lines, %{}, fn(line, headers_so_far) ->
+      [key, value] = String.split(line, ": ")
+      Map.put(headers_so_far, key, value)
+    end)
   end
 
   def parse_headers([], headers), do: headers
